@@ -33,6 +33,26 @@ Endpoint yang dipakai:
 https://api.waavis.com/v1/send_chat?token=DEVICE_TOKEN&to=628xxxxxx&message=Halo
 ```
 
+Untuk metode POST:
+
+```
+POST https://api.waavis.com/v1/send_chat
+Authorization: DEVICE_TOKEN
+Content-Type: application/x-www-form-urlencoded
+
+to=628xxxxxx&message=Halo&typing=false
+```
+
+Untuk send chat dengan link:
+
+```
+POST https://api.waavis.com/v1/send_chat_link
+Authorization: DEVICE_TOKEN
+Content-Type: application/x-www-form-urlencoded
+
+to=628xxxxxx&message=Halo&typing=false&link=https%3A%2F%2Fexample.com&link_title=Judul&link_description=Deskripsi
+```
+
 ## Cara Pakai di Kode
 
 ```cpp
@@ -41,6 +61,40 @@ https://api.waavis.com/v1/send_chat?token=DEVICE_TOKEN&to=628xxxxxx&message=Halo
 WaavisClient waavis;
 
 bool ok = waavis.sendChat("DEVICE_TOKEN", "628xxxxxx", "Halo");
+if (!ok) {
+  Serial.println(waavis.lastError());
+}
+```
+
+Contoh `sendChatPost`:
+
+```cpp
+#include <Waavis.h>
+
+WaavisClient waavis;
+
+bool ok = waavis.sendChatPost("DEVICE_TOKEN", "628xxxxxx", "Halo", false);
+if (!ok) {
+  Serial.println(waavis.lastError());
+}
+```
+
+Contoh `sendChatLink`:
+
+```cpp
+#include <Waavis.h>
+
+WaavisClient waavis;
+
+bool ok = waavis.sendChatLink(
+  "DEVICE_TOKEN",
+  "628xxxxxx",
+  "Halo",
+  false,
+  "https://example.com",
+  "Judul",
+  "Deskripsi"
+);
 if (!ok) {
   Serial.println(waavis.lastError());
 }

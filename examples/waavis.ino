@@ -15,6 +15,7 @@ const char *password = "YOUR_WIFI_PASSWORD";
 
 const char *deviceToken = "DEVICE_TOKEN";
 const char *destination = "628xxxxxx";
+const char *destinationJid = "62812xxxx@s.whatsapp.net"; // or plain number
 
 WaavisClient waavis;
 
@@ -32,9 +33,27 @@ void setup() {
 
 	bool ok = waavis.sendChat(deviceToken, destination, "Halo");
 	if (ok) {
-		Serial.println("Message sent");
+		Serial.println("sendChat OK");
 	} else {
-		Serial.print("Send failed: ");
+		Serial.print("sendChat failed: ");
+		Serial.println(waavis.lastError());
+	}
+
+	bool okPost = waavis.sendChatPost(deviceToken, destinationJid, "Halo", true);
+	if (okPost) {
+		Serial.println("sendChatPost OK");
+	} else {
+		Serial.print("sendChatPost failed: ");
+		Serial.println(waavis.lastError());
+	}
+
+	bool okLink = waavis.sendChatLink(deviceToken, destination, "Halo", true,
+							"https://waavis.com", "Waavis API",
+							"WhatsApp API Service");
+	if (okLink) {
+		Serial.println("sendChatLink OK");
+	} else {
+		Serial.print("sendChatLink failed: ");
 		Serial.println(waavis.lastError());
 	}
 }

@@ -73,6 +73,78 @@ bool WaavisClient::sendChat(const String &token, const String &to, const String 
   return true;
 }
 
+bool WaavisClient::sendChatPost(const String &token, const String &to,
+                                const String &message, bool typing) {
+  String body = "to=" + urlEncode(to) +
+                "&message=" + urlEncode(message) +
+                "&typing=" + String(typing ? "true" : "false");
+  return sendPost("/v1/send_chat", token, body);
+}
+
+bool WaavisClient::sendChatLink(const String &token, const String &to,
+                                const String &message, bool typing,
+                                const String &link, const String &linkTitle,
+                                const String &linkDescription) {
+  String body = "to=" + urlEncode(to) +
+                "&message=" + urlEncode(message) +
+                "&typing=" + String(typing ? "true" : "false") +
+                "&link=" + urlEncode(link) +
+                "&link_title=" + urlEncode(linkTitle) +
+                "&link_description=" + urlEncode(linkDescription);
+  return sendPost("/v1/send_chat_link", token, body);
+}
+
+bool WaavisClient::sendPost(const String &path, const String &token, const String &body) {
+  if (WiFi.status() != WL_CONNECTED) {
+    _lastError = "WiFi not connected";
+    return false;
+  }
+
+  String url = _baseUrl + path;
+
+#if defined(ESP8266)
+  BearSSL::WiFiClientSecure client;
+  if (_insecure) {
+    client.setInsecure();
+  }
+  HTTPClient http;
+  if (!http.begin(client, url)) {
+    _lastError = "HTTP begin failed";
+    return false;
+  }
+#elif defined(ESP32)
+  WiFiClientSecure client;
+  if (_insecure) {
+    client.setInsecure();
+  }
+  HTTPClient http;
+  if (!http.begin(client, url)) {
+    _lastError = "HTTP begin failed";
+    return false;
+  }
+#endif
+
+  http.addHeader("Authorization", token);
+  http.addHeader("Content-Type", "application/x-www-form-urlencoded");
+
+  int httpCode = http.POST(body);
+  if (httpCode <= 0) {
+    _lastError = http.errorToString(httpCode);
+    http.end();
+    return false;
+  }
+
+  if (httpCode < 200 || httpCode >= 300) {
+    _lastError = "HTTP " + String(httpCode);
+    http.end();
+    return false;
+  }
+
+  _lastError = "";
+  http.end();
+  return true;
+}
+
 String WaavisClient::urlEncode(const String &value) const {
   String encoded = "";
   const char *hex = "0123456789ABCDEF";
