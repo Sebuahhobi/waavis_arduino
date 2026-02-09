@@ -102,7 +102,7 @@ if (!ok) {
 
 ## Catatan Keamanan
 
-Library menggunakan koneksi HTTPS dengan mode `setInsecure()` secara default agar mudah dipakai. Jika Anda ingin validasi sertifikat TLS, beri tahu saya agar saya tambahkan opsi CA cert.
+Library menggunakan koneksi HTTPS dengan mode `setInsecure()` secara default agar mudah dipakai.
 
 ## Dukungan Board
 
@@ -110,5 +110,6 @@ Library menggunakan koneksi HTTPS dengan mode `setInsecure()` secara default aga
 - ESP32
 
 ## Lisensi
+
 
 MIT License. Lihat file LICENSE.
