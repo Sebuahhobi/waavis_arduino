@@ -25,7 +25,3 @@ private:
 };
 
 #endif
-lue) const;
-};
-
-#endif
