@@ -13,6 +13,9 @@ public:
   bool sendChatLink(const String &token, const String &to, const String &message,
                     bool typing, const String &link, const String &linkTitle,
                     const String &linkDescription);
+  bool sendChatMedia(const String &token, const String &to, const String &message,
+                     bool typing, const String &type, Stream &file,
+                     size_t fileSize, const String &fileName);
   String lastError() const;
 
 private:
