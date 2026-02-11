@@ -56,6 +56,15 @@ void setup() {
 		Serial.print("sendChatLink failed: ");
 		Serial.println(waavis.lastError());
 	}
+
+	bool okMediaUrl = waavis.sendChatMediaFromUrl(deviceToken, destination, "Halo", false,
+								"image", "https://example.com/image.jpg");
+	if (okMediaUrl) {
+		Serial.println("sendChatMediaFromUrl OK");
+	} else {
+		Serial.print("sendChatMediaFromUrl failed: ");
+		Serial.println(waavis.lastError());
+	}
 }
 
 void loop() {}

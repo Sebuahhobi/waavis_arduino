@@ -2,6 +2,14 @@
 
 Library Arduino untuk mengirim pesan WhatsApp melalui Waavis API menggunakan metode GET dan POST.
 
+| Fitur | Checklist |
+| --- | --- |
+| send chat (GET) | [x] |
+| send chat (POST) | [x] |
+| send_chat_link (POST) | [x] |
+| send media (from url) (POST) | [x] |
+| send media esp32 web cam | [x] |
+
 ## Fitur
 
 - Mengirim chat sederhana dengan endpoint `send_chat`
@@ -146,9 +154,31 @@ if (!ok) {
 }
 ```
 
+Contoh `sendChatMediaFromUrl` (download URL lalu upload sebagai `file`):
+
+```cpp
+#include <Waavis.h>
+
+WaavisClient waavis;
+
+bool ok = waavis.sendChatMediaFromUrl(
+  "DEVICE_TOKEN",
+  "628xxxxxx",
+  "Halo",
+  false,
+  "image",
+  "https://example.com/image.jpg"
+);
+if (!ok) {
+  Serial.println(waavis.lastError());
+}
+```
+
 ## Catatan Keamanan
 
 Library menggunakan koneksi HTTPS dengan mode `setInsecure()` secara default agar mudah dipakai.
+
+Untuk `sendChatMediaFromUrl`, server file harus memberi `Content-Length` agar ukuran file diketahui.
 
 ## Dukungan Board
 

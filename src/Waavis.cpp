@@ -98,6 +98,101 @@ bool WaavisClient::sendChatMedia(const String &token, const String &to,
                                  const String &message, bool typing,
                                  const String &type, Stream &file,
                                  size_t fileSize, const String &fileName) {
+  return sendChatMediaStream(token, to, message, typing, type, file, fileSize, fileName);
+}
+
+bool WaavisClient::sendChatMediaFromUrl(const String &token, const String &to,
+                                        const String &message, bool typing,
+                                        const String &type, const String &fileUrl,
+                                        const String &fileName) {
+  if (WiFi.status() != WL_CONNECTED) {
+    _lastError = "WiFi not connected";
+    return false;
+  }
+
+  bool isHttps = fileUrl.startsWith("https://");
+
+#if defined(ESP8266)
+  HTTPClient httpFile;
+  if (isHttps) {
+    BearSSL::WiFiClientSecure client;
+    if (_insecure) {
+      client.setInsecure();
+    }
+    if (!httpFile.begin(client, fileUrl)) {
+      _lastError = "HTTP begin failed";
+      return false;
+    }
+  } else {
+    WiFiClient client;
+    if (!httpFile.begin(client, fileUrl)) {
+      _lastError = "HTTP begin failed";
+      return false;
+    }
+  }
+#elif defined(ESP32)
+  HTTPClient httpFile;
+  if (isHttps) {
+    WiFiClientSecure client;
+    if (_insecure) {
+      client.setInsecure();
+    }
+    if (!httpFile.begin(client, fileUrl)) {
+      _lastError = "HTTP begin failed";
+      return false;
+    }
+  } else {
+    WiFiClient client;
+    if (!httpFile.begin(client, fileUrl)) {
+      _lastError = "HTTP begin failed";
+      return false;
+    }
+  }
+#endif
+
+  int httpCode = httpFile.GET();
+  if (httpCode <= 0) {
+    _lastError = httpFile.errorToString(httpCode);
+    httpFile.end();
+    return false;
+  }
+
+  if (httpCode < 200 || httpCode >= 300) {
+    _lastError = "HTTP " + String(httpCode);
+    httpFile.end();
+    return false;
+  }
+
+  int size = httpFile.getSize();
+  if (size <= 0) {
+    _lastError = "File size unknown";
+    httpFile.end();
+    return false;
+  }
+
+  String finalName = fileName;
+  if (finalName.length() == 0) {
+    int qIndex = fileUrl.indexOf('?');
+    String cleanUrl = (qIndex >= 0) ? fileUrl.substring(0, qIndex) : fileUrl;
+    int slashIndex = cleanUrl.lastIndexOf('/');
+    if (slashIndex >= 0 && slashIndex + 1 < static_cast<int>(cleanUrl.length())) {
+      finalName = cleanUrl.substring(slashIndex + 1);
+    } else {
+      finalName = "file";
+    }
+  }
+
+  Stream &stream = *httpFile.getStreamPtr();
+  bool ok = sendChatMediaStream(token, to, message, typing, type, stream,
+                                static_cast<size_t>(size), finalName);
+  httpFile.end();
+  return ok;
+}
+
+bool WaavisClient::sendChatMediaStream(const String &token, const String &to,
+                                       const String &message, bool typing,
+                                       const String &type, Stream &file,
+                                       size_t fileSize, const String &fileName) {
   if (WiFi.status() != WL_CONNECTED) {
     _lastError = "WiFi not connected";
     return false;
