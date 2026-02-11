@@ -15,7 +15,7 @@ Library Arduino untuk mengirim pesan WhatsApp melalui Waavis API menggunakan met
 - Mengirim chat sederhana dengan endpoint `send_chat`
 - Mengirim chat dengan metode POST (typing)
 - Mengirim chat dengan link
-- Mengirim chat media (gambar, video, dokumen)
+- Mengirim chat media (gambar)
 - Mendukung ESP8266 dan ESP32
 - URL encoding otomatis untuk parameter query
 
