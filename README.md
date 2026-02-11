@@ -4,11 +4,11 @@ Library Arduino untuk mengirim pesan WhatsApp melalui Waavis API menggunakan met
 
 | Fitur | Checklist |
 | --- | --- |
-| send chat (GET) | [x] |
-| send chat (POST) | [x] |
-| send_chat_link (POST) | [x] |
-| send media (from url) (POST) | [x] |
-| send media esp32 web cam | [x] |
+| send_chat (GET) | ✅ |
+| send_chat (POST) | ✅ |
+| send_chat_link (POST) | ✅ |
+| send media (from url) (POST) | ✅ |
+| send media esp32 web cam | ✅ |
 
 ## Fitur
 
